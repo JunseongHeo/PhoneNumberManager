@@ -1,13 +1,25 @@
 package Execution;
 
 import Info.PhoneInfo; // 다른패키지의 클래스 수입
-import Info.PhoneUnivInfo; 
+import Info.PhoneUnivInfo;
 import Info.PhoneCompanyInfo;
+import Interface.INPUT_SELECT;
 
 public class PhoneBookManager {
 	final int MAX_CNT = 100; // final로 상수취급. 초기화한 값 그대로 사용
 	PhoneInfo[] infoStorage = new PhoneInfo[MAX_CNT]; // 폰인포 객체배열
 	int curCnt = 0; // 객체배열 인덱스
+	
+	// 인스턴스를 하나만 생성하도록 제한
+	static PhoneBookManager inst=null;
+	public static PhoneBookManager createManagerInst() {
+		if ( inst == null) {
+			inst = new PhoneBookManager();
+		}
+		return inst;
+	}
+	private PhoneBookManager() {}
+	
 	
 	// 생성자 초기화 메서드
 	private PhoneInfo readFriendInfo() { // 일반친구
@@ -48,13 +60,13 @@ public class PhoneBookManager {
 		PhoneInfo info = null; // 객체 생성
 		
 		switch (choice) { // 선택한 번호에 따라 생성자 초기화 메서드 호출
-		case 1: 
+		case INPUT_SELECT.NORMAL: 
 			info=readFriendInfo();
 			break;
-		case 2: 
+		case INPUT_SELECT.UNIV: 
 			info=readUnivFriendInfo();
 			break;
-		case 3:
+		case INPUT_SELECT.COMPANY: 
 			info=readCompanyFriendInfo();
 			break;
 		default:
