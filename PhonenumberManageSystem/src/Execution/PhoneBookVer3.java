@@ -1,6 +1,6 @@
-package Info;
+package Execution;
 
-public class PhoneBookVer03 {
+public class PhoneBookVer3 {
 
 	public static void main(String[] args) {
 		PhoneBookManager manager = new PhoneBookManager();
