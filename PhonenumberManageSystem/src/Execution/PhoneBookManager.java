@@ -4,6 +4,7 @@ import Info.PhoneInfo; // 다른패키지의 클래스 수입
 import Info.PhoneUnivInfo;
 import Info.PhoneCompanyInfo;
 import Interface.INPUT_SELECT;
+import MyException.MenuChoiceException;
 
 public class PhoneBookManager {
 	final int MAX_CNT = 100; // final로 상수취급. 초기화한 값 그대로 사용
@@ -18,8 +19,8 @@ public class PhoneBookManager {
 		}
 		return inst;
 	}
-	private PhoneBookManager() {}
 	
+	private PhoneBookManager() {}
 	
 	// 생성자 초기화 메서드
 	private PhoneInfo readFriendInfo() { // 일반친구
@@ -51,13 +52,17 @@ public class PhoneBookManager {
 		return new PhoneCompanyInfo(name, phone, company);
 	}
 	// 데이터 입력
-	public void inputData() {
+	public void inputData() throws MenuChoiceException {
 		System.out.println("데이터 입력을 시작합니다.");
 		System.out.println("1. 일반, 2. 대학, 3.회사");
 		System.out.print("선택>>");
 		int choice = MenuViewer.keyboard.nextInt();
 		MenuViewer.keyboard.nextLine();
 		PhoneInfo info = null; // 객체 생성
+		
+		// 예외 던지기
+		if(choice<INPUT_SELECT.NORMAL || choice>INPUT_SELECT.COMPANY) 
+			throw new MenuChoiceException(choice);
 		
 		switch (choice) { // 선택한 번호에 따라 생성자 초기화 메서드 호출
 		case INPUT_SELECT.NORMAL: 
@@ -69,9 +74,8 @@ public class PhoneBookManager {
 		case INPUT_SELECT.COMPANY: 
 			info=readCompanyFriendInfo();
 			break;
-		default:
-			System.out.println("잘못된 입력입니다. 다시 입력해주세요");
 		}
+		
 		infoStorage[curCnt++] = info; // 작성된 인스턴스를 객체배열에 저장
 		System.out.println("데이터 입력이 완료되었습니다.");
 	}
