@@ -5,11 +5,14 @@ import Info.PhoneUnivInfo;
 import Info.PhoneCompanyInfo;
 import Interface.INPUT_SELECT;
 import MyException.MenuChoiceException;
+import java.util.HashSet;
+import java.util.Iterator;
 
 public class PhoneBookManager {
-	final int MAX_CNT = 100; // final로 상수취급. 초기화한 값 그대로 사용
-	PhoneInfo[] infoStorage = new PhoneInfo[MAX_CNT]; // 폰인포 객체배열
-	int curCnt = 0; // 객체배열 인덱스
+//	final int MAX_CNT = 100; // final로 상수취급. 초기화한 값 그대로 사용
+//	PhoneInfo[] infoStorage = new PhoneInfo[MAX_CNT]; // 폰인포 객체배열
+//	int curCnt = 0; // 객체배열 인덱스
+	HashSet<PhoneInfo> infoStorage = new HashSet<PhoneInfo>(); 
 	
 	// 인스턴스를 하나만 생성하도록 제한
 	static PhoneBookManager inst=null;
@@ -76,8 +79,13 @@ public class PhoneBookManager {
 			break;
 		}
 		
-		infoStorage[curCnt++] = info; // 작성된 인스턴스를 객체배열에 저장
-		System.out.println("데이터 입력이 완료되었습니다.");
+//		infoStorage[curCnt++] = info; // 작성된 인스턴스를 객체배열에 저장
+		boolean isAdded = infoStorage.add(info);
+		if(isAdded == true) {
+			System.out.println("데이터 입력이 완료되었습니다.");
+		} else {
+			System.out.println("이미 저장된 데이터입니다.");
+		}
 	}
 	// 데이터 검색
 	public void searchData() {
@@ -85,13 +93,21 @@ public class PhoneBookManager {
 		System.out.print("이름 : ");
 		String name = MenuViewer.keyboard.nextLine();
 		
-		int dataIdx = search(name);
-		if(dataIdx<0) {
-			System.out.println("해당하는 데이터가 존재하지 않습니다. \n");
+//		int dataIdx = search(name);
+//		if(dataIdx<0) {
+//			System.out.println("해당하는 데이터가 존재하지 않습니다. \n");
+//		} else {
+//			infoStorage[dataIdx].showPhoneInfo();
+//			System.out.println("데이터 검색이 완료되었습니다. \n");
+//		}
+		PhoneInfo info = search(name);
+		if(info == null) {
+			System.out.println("해당하는 데이터가 존재하지 않습니다.\n");
 		} else {
-			infoStorage[dataIdx].showPhoneInfo();
-			System.out.println("데이터 검색이 완료되었습니다. \n");
+			info.showPhoneInfo();
+			System.out.println("데이터 검색이 완료되었습니다.");
 		}
+		
 	}
 	// 데이터 삭제
 	public void deleteData() {
@@ -99,26 +115,42 @@ public class PhoneBookManager {
 		
 		System.out.print("이름 : ");
 		String name = MenuViewer.keyboard.nextLine();
-		int dataIdx = search(name);
 		
-		if(dataIdx<0) {
-			System.out.println("해당하는 데이터가 존재하지 않습니다. \n");
-		} else {
-			for (int idx = dataIdx; idx<(curCnt-1); idx++) {
-				infoStorage[idx] = infoStorage[idx+1];
+//		int dataIdx = search(name);
+//				if(dataIdx<0) {
+//			System.out.println("해당하는 데이터가 존재하지 않습니다. \n");
+//		} else {
+//			for (int idx = dataIdx; idx<(curCnt-1); idx++) {
+//				infoStorage[idx] = infoStorage[idx+1];
+//			}
+//			curCnt--;
+//			System.out.println("데이터 삭제가 완료되었습니다.");
+//		}
+		Iterator<PhoneInfo> itr = infoStorage.iterator();
+		while(itr.hasNext()) {
+			PhoneInfo curInfo = itr.next();
+			if(name.compareTo(curInfo.name) == 0) {
+				itr.remove();
+				System.out.println("데이터 삭제가 완료되었습니다.");
+				return;
 			}
-			curCnt--;
-			System.out.println("데이터 삭제가 완료되었습니다.");
 		}
 	}
-	private int search(String name) {
-		for(int idx = 0; idx<curCnt; idx++) {
-			PhoneInfo curInfo = infoStorage[idx]; // 서치용 객체 생성해서 데이터 넣기
-			// 검색할 이름과 infoStroage에 저장된 이름을 비교
-			if(name.compareTo(curInfo.name) == 0) { // compareTo()메서드 -1크다, 0같다, 1작다
-				return idx; // 이름이 같은 인스턴스의 인덱스 반환
+	private PhoneInfo search(String name) {
+//		for(int idx = 0; idx<curCnt; idx++) {
+//			PhoneInfo curInfo = infoStorage[idx]; // 서치용 객체 생성해서 데이터 넣기
+//			// 검색할 이름과 infoStroage에 저장된 이름을 비교
+//			if(name.compareTo(curInfo.name) == 0) { // compareTo()메서드 -1크다, 0같다, 1작다
+//				return idx; // 이름이 같은 인스턴스의 인덱스 반환
+//			}
+//		}
+		Iterator<PhoneInfo> itr = infoStorage.iterator();
+		while (itr.hasNext()) {
+			PhoneInfo curInfo = itr.next();
+			if(name.compareTo(curInfo.name) == 0) {
+				return curInfo;
 			}
 		}
-		return -1; // if문 실행되지 않으면 -1값반환. 다른메서드에서 0이상이어야 하는 조건식 불만족하게 됌.
+		return null;
 	}
 }
